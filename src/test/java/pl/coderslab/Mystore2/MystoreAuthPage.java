@@ -1,36 +1,22 @@
-package pl.coderslab.Mystore;
+package pl.coderslab.Mystore2;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class UserAuthPage {
-
-    @FindBy(id = "email_create")
-    private WebElement newUserEmailInput;
-
-    @FindBy(id = "SubmitCreate")
-    private WebElement createNewAccountBtn;
-
+public class MystoreAuthPage {
     @FindBy(name = "email")
     private WebElement loginEmailInput;
 
     @FindBy(name = "password")
     private WebElement loginPasswdInput;
 
-    @FindBy(id = "submit-login")
+    @FindBy(id = "SubmitLogin")
     private WebElement loginBtn;
 
-    public UserAuthPage(WebDriver driver) {
+    public MystoreAuthPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
-    }
-
-    public void enterNewUserEmailAndSubmit(String email) {
-        newUserEmailInput.clear();
-        newUserEmailInput.sendKeys(email);
-
-        createNewAccountBtn.click();
     }
 
     public void loginAs(String email, String passwd) {
