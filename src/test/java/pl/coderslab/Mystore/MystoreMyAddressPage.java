@@ -50,7 +50,7 @@ public class MystoreMyAddressPage {
         postCodeInput.sendKeys(postcode);
 
         Select countrySelect = new Select(countryDropdown);
-        countrySelect.selectByVisibleText("United Kingdom");
+        countrySelect.selectByVisibleText("Poland");
 
         phoneInput.clear();
         phoneInput.sendKeys(phone);

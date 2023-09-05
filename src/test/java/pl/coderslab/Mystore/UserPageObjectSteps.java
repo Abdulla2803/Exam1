@@ -4,68 +4,72 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
 
+public class UserPageObjectSteps {
+    private WebDriver driver;
+    private UserAuthPage authPage;
+    private MystoreMyAddressPage myAddressPage;
 
-
-    public class UserPageObjectSteps {
-        private WebDriver driver;
-        private UserAuthPage authPage;
-        private MystoreMyAddressPage myAddressPage;
-
-        @Given("I'm on the hotel authentication page")
-        public void userIsLoginToAccount() {
-            driver = new ChromeDriver();
-            driver.manage().window().maximize();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            driver.get("https://mystore-testlab.coderslab.pl/index.php?controller=authentication&back=my-account");
-        }
-
-        @When("I sign in using {string} and {string}")
-        public void iLoginUsingAnd(String signin, String passwd) {
-            authPage = new UserAuthPage(driver);
-            authPage.loginAs(signin, passwd);
-        }
-
-        @And("I go to my addresses page")
-        public void iGoToMyAddressesPage() {
-            myAddressPage = new MystoreMyAddressPage(driver);
-            myAddressPage.goToMyAddressesPage();
-        }
-
-        @Then("I can see there is no addresses")
-        public void iCanSeeThereIsNoAddresses() {
-            Assertions.assertFalse(myAddressPage.addressIsVisible(), "No addresses should be visible");
-        }
-
-        @When("I add new address")
-        public void iAddNewAddress() {
-            myAddressPage.addNewAddress();
-        }
-
-        @And("I enter new address {string}, {string}, {string}, {string}")
-        public void iEnterNewAddress(String address, String postalCode, String city, String phoneNumber) {
-            myAddressPage.enterNewAddressData(address, city, postalCode, phoneNumber);
-        }
-
-        @Then("I can see new address")
-        public void iCanSeeNewAddress() {
-            Assertions.assertTrue(myAddressPage.addressIsVisible(), "Created address should be visible");
-        }
-
-        @And("I close the browser")
-        public void iCloseTheBrowser() {
-            driver.quit();
-        }
-
-        @And("I verify created address {string}, {string}, {string}, {string}")
-        public void iVerifyCreatedAddress(String address, String postalCode, String city, String phoneNumber) {
-            String addressAsText = myAddressPage.getFirstAddressAsText();
-            String expectedAddress = String.join("\n", address, postalCode + " " + city, phoneNumber);
-            Assertions.assertEquals(expectedAddress, addressAsText);
-        }
+    @Given("I'm on the hotel authentication page")
+    public void userIsLoginToAccount() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get("https://mystore-testlab.coderslab.pl/index.php?controller=authentication&back=my-account");
     }
+
+    @When("I sign in using {string} and {string}")
+    public void iLoginUsingAnd(String signin, String passwd) {
+        authPage = new UserAuthPage(driver);
+        authPage.loginAs(signin, passwd);
+    }
+
+    @And("I go to my addresses page")
+    public void iGoToMyAddressPage() {
+        AccountPage myAccountPage = new AccountPage(driver);
+        myAccountPage.goToMyAddressPage();
+        MystoreMyAddressPage myAddressesPage = new MystoreMyAddressPage(driver);
+    }
+
+    @When("I add new address")
+    public void clickingAddNewAddress() {
+        driver.findElement(By.cssSelector("#content > div.addresses-footer > a > span")).click();
+    }
+
+    @And("I enter new address {string}, {string}, {string}, {string}")
+    public void iEnterNewAddress(String alias, String address, String city, String postCode, String phone) {
+        MystoreMyAddressPage x = new MystoreMyAddressPage(driver);
+        x.enterNewAddress(alias, address, city, postCode, phone);
+    }
+
+
+    @Then("I can see new address")
+    public void iCanSeeNewAddress() {
+        MyAddressPage myAddress = new MyAddressPage(driver);
+        Assert.assertNotNull(myAddress.alert);
+        Assert.assertTrue(myAddress.isAlertVisible());
+    }
+
+    @And("I verify created address {string}, {string}, {string}, {string}")
+    public void verifyAddress(String alias, String address, String city, String postCode, String phone) {
+        MyAddressPage myAddress = new MyAddressPage(driver);
+        String[] l = myAddress.address.findElement(By.tagName("address")).getText().split("\n");
+        String aliasFromPage = myAddress.address.findElement(By.tagName("h4")).getText();
+        Assert.assertEquals(aliasFromPage, alias);
+        Assert.assertEquals(l[1], address);
+        Assert.assertEquals(l[2], city);
+        Assert.assertEquals(l[3], postCode);
+        Assert.assertEquals(l[5], phone);
+    }
+    @And("I close the browser")
+    public void iCloseTheBrowser() {
+        driver.quit();
+    }
+}
