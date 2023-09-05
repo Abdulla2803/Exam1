@@ -1,55 +1,60 @@
 package pl.coderslab.Mystore;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-
-import java.util.List;
+import org.openqa.selenium.support.ui.Select;
 
 public class MystoreMyAddressPage {
+
     private final WebDriver driver;
 
-    public MystoreMyAddressPage (WebDriver driver) {
+    @FindBy(id = "field-alias")
+    private WebElement aliasInput;
+
+    @FindBy(id = "field-address1")
+    private WebElement addressInput;
+
+    @FindBy(id = "field-city")
+    private WebElement cityInput;
+
+    @FindBy(id = "field-postcode")
+    private WebElement postCodeInput;
+
+    @FindBy(id = "field-id_country")
+    private WebElement countryDropdown;
+
+    @FindBy(id = "field-phone")
+    private WebElement phoneInput;
+
+    @FindBy(css = "#content > div > div > form > footer > button")
+    private WebElement saveBtn;
+
+    public MystoreMyAddressPage(WebDriver driver) {
         this.driver = driver;
+        PageFactory.initElements(driver, this);
     }
 
+    public void enterNewAddress(String alias, String address, String city, String postcode, String phone) {
+        aliasInput.clear();
+        aliasInput.sendKeys(alias);
 
-    @FindBy(xpath = "//*[@id=\"footer_account_list\"]/li[4]/a")
-    private WebElement addressLink;
+        addressInput.clear();
+        addressInput.sendKeys(address);
 
-    @FindBy(xpath = "//*[@id=\"content\"]/div[2]/a/span")
-    private WebElement createNewAddressButton;
+        cityInput.clear();
+        cityInput.sendKeys(city);
 
-    @FindBy(className = "address_address1")
-    private List<WebElement> addressLines;
+        postCodeInput.clear();
+        postCodeInput.sendKeys(postcode);
 
-    @FindBy(className = "address_city")
-    private List<WebElement> addressCities;
+        Select countrySelect = new Select(countryDropdown);
+        countrySelect.selectByVisibleText("United Kingdom");
 
-    @FindBy(className = "address_phone_mobile")
-    private List<WebElement> addressPhoneMobiles;
+        phoneInput.clear();
+        phoneInput.sendKeys(phone);
 
-
-    public boolean addressIsVisible() {
-        return !addressLines.isEmpty();
-    }
-
-    public void addNewAddress() {
-        createNewAddressButton.click();
-    }
-
-    public String getFirstAddressAsText() {
-        String addressText = addressLines.get(0).getText();
-        String cityAndPostal = addressCities.get(0).getText();
-        String phoneMobile = addressPhoneMobiles.get(0).getText();
-        return String.join("\n", addressText, cityAndPostal, phoneMobile);
-    }
-
-    public void enterNewAddressData(String address, String city, String postalCode, String phoneNumber) {
-    }
-
-    public void goToMyAddressesPage() {
+        saveBtn.click();
     }
 }

@@ -7,40 +7,40 @@ import org.openqa.selenium.support.PageFactory;
 
 public class UserAuthPage {
 
-    @FindBy(id = "email_create")
-    private WebElement newUserEmailInput;
-
-    @FindBy(id = "SubmitCreate")
-    private WebElement createNewAccountBtn;
-
-    @FindBy(name = "email")
-    private WebElement loginEmailInput;
-
-    @FindBy(name = "password")
-    private WebElement loginPasswdInput;
-
-    @FindBy(id = "submit-login")
-    private WebElement loginBtn;
+    private final WebDriver driver;
 
     public UserAuthPage(WebDriver driver) {
+        this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
-    public void enterNewUserEmailAndSubmit(String email) {
-        newUserEmailInput.clear();
-        newUserEmailInput.sendKeys(email);
+    @FindBy(id = "_mobile_user_info")
+    private WebElement accountLoginBtn;
 
-        createNewAccountBtn.click();
+    @FindBy(id = "field-email")
+    public WebElement loginEmailInput;
+
+    @FindBy(name = "password")
+    private WebElement loginPasswordInput;
+
+    @FindBy(id = "submit-login")
+    private WebElement loginButton;
+
+    public UserAuthPage(WebDriver driver, WebElement accountLoginBtn, WebElement loginEmailInput, WebElement loginPasswordInput, WebElement loginButton) {
+        this.driver = driver;
+        this.accountLoginBtn = accountLoginBtn;
+        this.loginEmailInput = loginEmailInput;
+        this.loginPasswordInput = loginPasswordInput;
+        this.loginButton = loginButton;
     }
 
-    public void loginAs(String email, String passwd) {
+    public void loginAs(String login, String passwd) {
         loginEmailInput.clear();
-        loginEmailInput.sendKeys(email);
+        loginEmailInput.sendKeys(login);
 
-        loginPasswdInput.clear();
-        loginPasswdInput.sendKeys(passwd);
+        loginPasswordInput.clear();
+        loginPasswordInput.sendKeys(passwd);
 
-        loginBtn.click();
+        loginButton.click();
     }
 }
-
